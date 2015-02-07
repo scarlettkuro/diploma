@@ -4,9 +4,11 @@
 
 int a[CONT];
 int b[CONT];
+int c[CONT];
 
 int *_next = &a;
 int *_cur = &b;
+int *_pre = &c;
 
 void init();
 void step();
