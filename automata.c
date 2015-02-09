@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #define LONGS 5
-#define CONT 5*8
+#define CONT LONGS*8
 #define longway 10
 
 typedef char item;
@@ -26,70 +26,48 @@ void encode(item* to);
 int main() {
     int i,j;
     
-    char text[LONGS];
-    scanf("%s",&text);
-    decode(text,_next);
-    //getch();
-    //init();
+    init();
     for(i = 0; i < longway; i++)
           step(0);
     reverse();
-    for(i = 0; i <longway-2; i++)
+    for(i = 0; i <longway-1; i++)
           step(0);
-    encode(_next);
+    encode(_cur);
           
     printf("\n");
     getch();
 }
 
 void decode(char bytes[], item* to) {
-    item bits[CONT];
     int i,j;
-    for(i=0; i<LONGS;i++){
-       for(j=0;j<8;j++) {
+    for(i=0; i<LONGS;i++) 
+       for(j=0;j<8;j++)
           *(to + 8*i + j) = !!(bytes[i] & (1<<j));
-           //printf("%d ", bits[8*i + j]);
-            }
-           //printf("\n");
-           }
-          swip();
+
 }
 
 void encode(item* from) {
-    item bits[CONT];
     int i,j;
     for(i=0; i<LONGS;i++){
        char a = 0;
-       for(j=0;j<8;j++) 
-           a+= !!*(from + 8*i + j) * pow(2,j);
+       for(j=0;j<8;j++)
+          a+= *(from + 8*i + j) <<j; 
        printf("%c",a);
+       
     }
-         // swip();
 }
 
 void init() { 
-     /*
-    srand(time(0));
-    
-    int i;
-    for(i = 0; i < CONT; i++)
-          *(_cur + i) = (item)rand()%2;
-          */
-        int i;  
-    item text[CONT];
+    char text[LONGS];
     scanf("%s",&text);
-    item *t = &text[0];
-    for(i = 0; i < CONT; i++)
-          *(_next + i) =  *(t + i) ;
-          swip();
-    printf("\n");
+    decode(text,_next);
+    swip();
 }
 
 void step() {
     int i;
     for(i = 0; i < CONT; i++)
           *(_next + i) = local(i) ;
-     
     swip();
     display();
 }
@@ -113,15 +91,15 @@ item local(int i) {
     item pre =   *(_pre + i);
      
     if (*left && *self && *right)
-       return pre ^ 1;
+       return (pre + 1) %2;
        else
        if (*left && !*self && *right)
-          return pre ^ 1;
+          return (pre + 1) %2;
           else
           if (!*left && !*self && !*right)
-             return pre ^ 1;
+             return (pre + 1) %2;
     else
-        return pre ^ 0;
+        return (pre + 0) %2;
         
         //return pre ^ (*left ^ *self * *right) ;
 }
@@ -140,19 +118,11 @@ void display() {
     char s;
     int count =0;
     for(i = 0; i < CONT; i++) {
-         // count += *(_cur+i);
-         // if (!*(_cur + i)) s = '0';
-                   // else s = '_';
+          //count += *(_cur+i) ^ *(_cur+i+1);
+          if (!*(_cur + i)) s = '0';
+                    else s = '_';
           printf("%c", *(_cur + i));
           }
-         /*
-    printf("|");
-    for(i = 0; i < CONT; i++) {
-          if (!*(_pre + i)) s = '0';
-                    else s = '_';
-          printf("%c", s);
-          }
-    */
     printf("\n");
 }
 
