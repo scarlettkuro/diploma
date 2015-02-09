@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <time.h>
-#define CONT 5
-#define longway 20
+#define LONGS 5
+#define CONT 5*8
+#define longway 10
 
-typedef  char item;
+typedef char item;
 
 item a[CONT];
 item b[CONT];
@@ -19,18 +20,51 @@ void swip();
 void display();
 item local(int i);
 void reverse();
+void decode(char bytes[], item* to);
+void encode(item* to);
 
 int main() {
     int i,j;
-    init();
+    
+    char text[LONGS];
+    scanf("%s",&text);
+    decode(text,_next);
+    //getch();
+    //init();
     for(i = 0; i < longway; i++)
           step(0);
     reverse();
-    for(i = 0; i <longway-1; i++)
+    for(i = 0; i <longway-2; i++)
           step(0);
+    encode(_next);
           
     printf("\n");
     getch();
+}
+
+void decode(char bytes[], item* to) {
+    item bits[CONT];
+    int i,j;
+    for(i=0; i<LONGS;i++){
+       for(j=0;j<8;j++) {
+          *(to + 8*i + j) = !!(bytes[i] & (1<<j));
+           //printf("%d ", bits[8*i + j]);
+            }
+           //printf("\n");
+           }
+          swip();
+}
+
+void encode(item* from) {
+    item bits[CONT];
+    int i,j;
+    for(i=0; i<LONGS;i++){
+       char a = 0;
+       for(j=0;j<8;j++) 
+           a+= !!*(from + 8*i + j) * pow(2,j);
+       printf("%c",a);
+    }
+         // swip();
 }
 
 void init() { 
@@ -77,7 +111,7 @@ item local(int i) {
     if (i>=CONT) right = _cur; else right = _cur + i + 1;
     
     item pre =   *(_pre + i);
-     /*
+     
     if (*left && *self && *right)
        return pre ^ 1;
        else
@@ -88,8 +122,8 @@ item local(int i) {
              return pre ^ 1;
     else
         return pre ^ 0;
-        */
-        return pre ^ (*left ^ *self * *right) ;
+        
+        //return pre ^ (*left ^ *self * *right) ;
 }
 
 void reverse() {
@@ -105,12 +139,12 @@ void display() {
     int i;
     char s;
     int count =0;
-    for(i = 0; i < CONT; i++) //{
+    for(i = 0; i < CONT; i++) {
          // count += *(_cur+i);
-          //if (!*(_cur + i)) s = '0';
-                    //else s = '_';
+         // if (!*(_cur + i)) s = '0';
+                   // else s = '_';
           printf("%c", *(_cur + i));
-         // }
+          }
          /*
     printf("|");
     for(i = 0; i < CONT; i++) {
