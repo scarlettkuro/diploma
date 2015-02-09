@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#define CONT 60
+#define CONT 70
 
 int a[CONT];
 int b[CONT];
@@ -15,17 +15,21 @@ void step(int way);
 void swip();
 void display();
 int local(int i);
-void reverse(int i);
+int reverse(int i);
 
 int main() {
-    int i;
+    int i,j;
     init();
-    for(i = 0; i < 250; i++)
+    for(j=0; j<2; j++) {
+//    printf("%d\n",!0);
+    for(i = 0; i < 10; i++)
           step(1);
     printf("\n");
-    for(i = 0; i <0; i++)
+    for(i = 0; i <60; i++)
           step(0);
-    //display();
+          
+    printf("\n");
+          }
     getch();
 }
 
@@ -40,8 +44,8 @@ void init() {
 void step(int way) {
     int i;
     for(i = 0; i < CONT; i++)
-          if (way) local(i) ;
-              else reverse(i);
+          if (way) *(_next + i) = local(i) ;
+              else *(_next + i) =  reverse(i);
      
     swip();
     display();
@@ -58,36 +62,29 @@ void swip() {
 }
 
 int local(int i) {
-     int *left,*right ;
-     
-     if (i<0) left = _cur + CONT; else left = _cur + i - 1;
-     int *self = (_cur + i);
-     if (i>=CONT) right = _cur; else right = _cur + i + 1;
-     
-     int *next =  (_next + i);
-     
-     if (*left &&  *self && *right)
-        *next = 1;
-        else 
-        if (*left &&  !*self && *right)
-           *next = 1;
-           else 
-           if (!*left &&  !*self && !*right)
-              *next = 1;
-     else
-         *next = 0;
-         
-         return *next;
+    int *left,*right ;
+    int *self = (_cur + i);
+    if (i<0) left = _cur + CONT; else left = _cur + i - 1;
+    if (i>=CONT) right = _cur; else right = _cur + i + 1;
+    
+    if (*left && *self && *right)
+       return 1;
+       else
+       if (*left && !*self && *right)
+          return 1;
+          else
+          if (!*left && !*self && !*right)
+             return 1;
+    else
+        return 0;
 }
 
-void reverse(int i) {
+int reverse(int i) {
      int *next =  (_next + i);
      int pre =   *(_pre + i);
      int cur =   *(_cur + i);
-//     local(i);
-        //*next = (*next  + pre)%2;
-        *next = local(i) ^ pre;
-    // *next = local(i) ^ pre;
+     if (pre) return !local(i);
+      else return local(i);
 }
 
 void display() {
@@ -103,8 +100,8 @@ void display() {
           if (!*(_pre + i)) s = '0';
                     else s = '_';
           printf("%c", s);
-          }*/
-    
+          }
+    */
     printf("\n");
 }
 
