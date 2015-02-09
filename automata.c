@@ -11,11 +11,11 @@ int *_cur = &b;
 int *_pre = &c;
 
 void init();
-void step(int way);
+void step();
 void swip();
 void display();
 int local(int i);
-int reverse(int i);
+void reverse();
 
 int main() {
     int i,j;
@@ -25,11 +25,7 @@ int main() {
     for(i = 0; i < 4; i++)
           step(0);
     //printf("\n");
-    for(i = 0; i < CONT; i++) 
-          *(_next + i) = *(_pre + i) ;
-          swip();
-     
-    display();
+    reverse();
     for(i = 0; i <4-2; i++)
           step(0);
           
@@ -46,11 +42,10 @@ void init() {
           *(_cur + i) = rand()%2;
 }
 
-void step(int way) {
+void step() {
     int i;
     for(i = 0; i < CONT; i++)
-          if (way) *(_next + i) = local(i) ;
-              else *(_next + i) =  reverse(i);
+          *(_next + i) = local(i) ;
      
     swip();
     display();
@@ -72,23 +67,27 @@ int local(int i) {
     if (i<0) left = _cur + CONT; else left = _cur + i - 1;
     if (i>=CONT) right = _cur; else right = _cur + i + 1;
     
+    int pre =   *(_pre + i);
+     
     if (*left && *self && *right)
-       return 1;
+       return pre ^ 1;
        else
        if (*left && !*self && *right)
-          return 1;
+          return pre ^ 1;
           else
           if (!*left && !*self && !*right)
-             return 1;
+             return pre ^ 1;
     else
-        return 0;
+        return pre ^ 0;
 }
 
-int reverse(int i) {
-     int *next =  (_next + i);
-     int pre =   *(_pre + i);
-     int cur =   *(_cur + i);
-     return pre ^ local(i);
+void reverse() {
+     int i;
+     for(i = 0; i < CONT; i++) 
+          *(_next + i) = *(_pre + i) ;
+          swip();
+     
+    display();
 }
 
 void display() {
