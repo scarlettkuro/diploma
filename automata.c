@@ -20,16 +20,21 @@ int reverse(int i);
 int main() {
     int i,j;
     init();
-    for(j=0; j<2; j++) {
+   // for(j=0; j<1; j++) {
 //    printf("%d\n",!0);
-    for(i = 0; i < 10; i++)
-          step(1);
-    printf("\n");
-    for(i = 0; i <60; i++)
+    for(i = 0; i < 4; i++)
+          step(0);
+    //printf("\n");
+    for(i = 0; i < CONT; i++) 
+          *(_next + i) = *(_pre + i) ;
+          swip();
+     
+    display();
+    for(i = 0; i <4-2; i++)
           step(0);
           
     printf("\n");
-          }
+          //}
     getch();
 }
 
@@ -83,8 +88,7 @@ int reverse(int i) {
      int *next =  (_next + i);
      int pre =   *(_pre + i);
      int cur =   *(_cur + i);
-     if (pre) return !local(i);
-      else return local(i);
+     return pre ^ local(i);
 }
 
 void display() {
