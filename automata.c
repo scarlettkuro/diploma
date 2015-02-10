@@ -23,22 +23,29 @@ void display();
 item local(int i);
 void reverse();
 void decode(char bytes[], item* to);
-void encode(item* to);
+void encode(item* bits, char* to);
+void encodep(item* bits);
+void fileoutput(char *name) ;
 
 int main(int argc, char *argv[]) {
   if(argc<2)  exit(1);
+  int i,j;
+  
+  
   printf("%s\n", argv[1]);
-
-    int i,j;
     
     fileinit(argv[1]);
+    if (!strcmp(argv[2], "-e")) {
     for(i = 0; i < longway; i++)
-          step(0);
+          step(); 
+    fileoutput(argv[3]);
+    }
+  if (!strcmp(argv[2], "-d")) {     
     reverse();
     for(i = 0; i <longway-1; i++)
-          step(0);
-    encode(_cur);
-          
+          step();
+    //fileoutput(argv[3]);
+                 }
     printf("\n");
     getch();
 }
@@ -59,30 +66,54 @@ void fileinit(char *name) {
            for(i=0; i<LONGS;i++) 
            //printf("%c", getc(fp));
                      bytes[i] = getc(fp); 
+                     
+	fclose(fp);	
     decode(&bytes[0],_next);    
     swip();
 }
+
+
+void fileoutput(char *name) {
+    int i;
+    FILE *fp; 
+    char bytes[LONGS];
+    encode(_cur,&bytes[0]);
+    if((fp = fopen(name, "w")) != NULL)
+           for(i=0; i<LONGS;i++) 
+                      putc(bytes[i],fp); 
+                      fclose(fp);	
+}
+
 void init(char* text) { 
     decode(text,_next);
     swip();
 }
 
-void decode(char* bytes, item* to) {
+void decode(char* bytes, item* bits) {
     int i,j;
     for(i=0; i<LONGS;i++) 
        for(j=0;j<8;j++)
-          *(to + 8*i + j) = !!(*(bytes+i) & (1<<j));
+          *(bits + 8*i + j) = !!(*(bytes+i) & (1<<j));
 
 }
 
-void encode(item* from) {
+void encode(item* bits, char* bytes) {
     int i,j;
     for(i=0; i<LONGS;i++){
        char a = 0;
        for(j=0;j<8;j++)
-          a+= *(from + 8*i + j) <<j; 
+          a+= *(bits + 8*i + j) <<j; 
+       *(bytes + i) = a;
+    }
+}
+
+void encodep(item* bits) {
+    int i,j;
+    for(i=0; i<LONGS;i++){
+       char a = 0;
+       for(j=0;j<8;j++)
+          a+= *(bits + 8*i + j) <<j; 
        printf("%c",a);
-       
     }
 }
 
@@ -128,9 +159,13 @@ item local(int i) {
 
 void reverse() {
      int i;
+     int bitch = 0;
+     for(i = 0; i < CONT; i++) 
+          bitch+=*(_pre + i) ;
+     if (!bitch) step();
      for(i = 0; i < CONT; i++) 
           *(_next + i) = *(_pre + i) ;
-          swip();
+     swip();
      
     display();
 }
@@ -139,12 +174,13 @@ void display() {
     int i;
     char s;
     int count =0;
-    for(i = 0; i < CONT; i++) {
+    //for(i = 0; i < longway; i++) {
+    encodep(_cur);
           //count += *(_cur+i) ^ *(_cur+i+1);
-          if (!*(_cur + i)) s = '0';
+          /*if (!*(_cur + i)) s = '0';
                     else s = '_';
-          printf("%c", *(_cur + i));
-          }
+          printf("%c", *(_cur + i));*/
+      //    }
     printf("\n");
 }
 
