@@ -1,5 +1,11 @@
 automata.c contains second-order celullar automata (CA)
 
+run parametrs: input_name [-e/-d] output_name
+input_name - input file
+-e - encrypt input_name to output_name
+-d - decrypt input_name to output_name
+output_name - output file 
+
 void init(); - will be deleted next time
 void init(char* text);  - will be deleted next time
 void fileread(int decrypt); - reads a bunch from file and fill the arrays (layers of CA) with it
