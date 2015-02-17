@@ -6,6 +6,9 @@
 
 typedef char item;
 
+FILE *input; 
+FILE *output; 
+    
 item a[CONT];
 item b[CONT];
 item c[CONT];
@@ -16,8 +19,8 @@ item *_pre = &c;
 
 void init();
 void init(char* text);
-void fileinite(char* text);
-void fileinitd(char* text);
+void fileread(int decrypt);
+void filewrite(int decrypt);
 void step(int reversible);
 void swip();
 void display();
@@ -26,8 +29,6 @@ void reverse();
 void decode(char bytes[], item* to);
 void encode(item* bits, char* to);
 void encodep(item* bits);
-void fileoutpute(char *name) ;
-void fileoutputd(char *name) ;
 
 int main(int argc, char *argv[]) {
   if(argc<2)  exit(1);
@@ -35,82 +36,63 @@ int main(int argc, char *argv[]) {
   
   
   printf("%s\n", argv[1]);
-    
-    if (!strcmp(argv[2], "-e")) {
-       fileinite(argv[1]);
+  input = fopen(argv[1], "r");  
+  output = fopen(argv[3], "w");  
+  
+    //if (!) {
+       fileread(strcmp(argv[2], "-e"));
         for(i = 0; i < longway; i++)
               step(1); 
-        fileoutpute(argv[3]);
-    }
+        filewrite(strcmp(argv[2], "-e"));
+   /* }
     if (!strcmp(argv[2], "-d")) { 
-       fileinitd(argv[1]);    
-        //reverse();
+       fileread(1);  
         for(i = 0; i <longway; i++)
               step(1);
-        fileoutputd(argv[3]);
-    }
-    
+        filewrite(1);
+    }*/
+    fclose(input);
+    fclose(output);
     printf("\n");
     getch();
 }
 
-void fileinite(char *name) {
-    int i;
-    FILE *fp; 
-    char bytes[LONGS];
-    if((fp = fopen(name, "r")) != NULL)
-           for(i=0; i<LONGS;i++) 
-                    bytes[i] = getc(fp); 
-                     
-	fclose(fp);		
-    decode(&bytes[0],_next);    
-    swip();
-}
 
-void fileinitd(char *name) {
+void fileread(int decrypt) {
     int i;
-    FILE *fp; 
     char bytes[LONGS];
-    if((fp = fopen(name, "r")) != NULL){
-           for(i=0; i<LONGS;i++) 
-                    bytes[i] = getc(fp); 
-                	
-    decode(&bytes[0],_pre);   
-           for(i=0; i<LONGS;i++) 
-                    bytes[i] = getc(fp); 
-                	
-                 decode(&bytes[0],_cur); }        
-	fclose(fp);	   
-    //swip();
+    
+    if(input != NULL) {
+        for(i=0; i<LONGS;i++) 
+           bytes[i] = getc(input); 
+        decode(&bytes[0],_pre);   
+        //decryption additional reading for previous step  
+        if (decrypt) { 
+            for(i=0; i<LONGS;i++) 
+            bytes[i] = getc(input); 
+            decode(&bytes[0],_cur); 
+        }
+    }        
 }
 
 
 
-void fileoutpute(char *name) {
+void filewrite(int decrypt) {
     int i;
-    FILE *fp; 
     char bytes[LONGS];
-    if((fp = fopen(name, "w")) != NULL) {
+    if(output != NULL) {
+       encode(_cur,&bytes[0]);
+       for(i=0; i<LONGS;i++) 
+           putc(bytes[i],output); 
            
-    encode(_cur,&bytes[0]);
+       if (!decrypt) {
+           encode(_pre,&bytes[0]);
            for(i=0; i<LONGS;i++) 
-                      putc(bytes[i],fp); 
-    encode(_pre,&bytes[0]);
-           for(i=0; i<LONGS;i++) 
-                      putc(bytes[i],fp); }
-                      fclose(fp);	
+               putc(bytes[i],output); 
+       }
+    }
 }
 
-void fileoutputd(char *name) {
-    int i;
-    FILE *fp; 
-    char bytes[LONGS];
-    encode(_next,&bytes[0]);
-    if((fp = fopen(name, "w")) != NULL)
-           for(i=0; i<LONGS;i++) 
-                      putc(bytes[i],fp); 
-                      fclose(fp);	
-}
 
 void init(char* text) { 
     decode(text,_next);
