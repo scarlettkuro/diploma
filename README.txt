@@ -1,26 +1,34 @@
-automata.c contains second-order celullar automata (CA)
-
-run parametrs: input_name [-e/-d] output_name
+run parametrs: input_name [-e/-d] output_name password
 input_name - input file
 -e - encrypt input_name to output_name
 -d - decrypt input_name to output_name
 output_name - output file 
 
-void init(); - will be deleted next time
-void init(char* text);  - will be deleted next time
-void fileread(int decrypt); - reads a bunch from file and fill the arrays (layers of CA) with it
-void filewrite(int decrypt); - writes a bunch from arrays to file
-void step(int reversible); apply local rule to each element and swip layers
+automata.c contains second-order celullar automata (CA)
+
+void step(); - apply local rule to each element and swip layers
+void block(); - proccess a single block
 void swip(); - swips layers for next step
 void display(); - shows the contents of layers to console
-item local(int i,int reversible); - local rule of CA (reversible shows the direction; may be deleted next time)
-void reverse(); - make CA go inverse (for the dynamical decision; does not need for file I/O)
-void decode(char bytes[], item* to); - bytes to bits decode
-void encode(item* bits, char* to); - bytes from bits encode
-void encodep(item* bits); - bytes from bits ecnode to console
+item local(int i); - local rule of CA 
 
-LONGS - number of bytes in bunch
-CONT - number of bits in bunch
+_file.c contains procedures for reading/writing files
+
+void fileread(FILE *input, item* _cur, item* _pre, int decrypt, int LONGS) ; - read a block from file 
+void filewrite(FILE *output, item* _cur, item* _pre, int decrypt, int LONGS); - writes a block to file
+(_cur, _pre - current and pre-current layers of automata, LONGS - size of the block)
+
+_code.c contains procedures for bit/byte encode/decode
+void decode(char bytes[], item* to, int LONGS); - bytes to bits decode
+void encode(item* bits, char* to, int LONGS); - bytes from bits encode
+void encodep(item* bits, int LONGS); - bytes from bits ecnode to console
+(LONGS - size of the block)
+
+um.c must serve for initialization purposes
+contains item definition for now
+
+LONGS - number of bytes in block
+CONT - number of bits in block
 longway - count of steps for CA
 
 FILE *input; - input file
